@@ -26,7 +26,7 @@ function! OpenFileGrepSearch()
     10new
     set buftype=nofile
     set filetype=file_grep
-    file FileGrep
+    file! FileGrep
     startinsert
 endfunction
 function! FileGrep()
