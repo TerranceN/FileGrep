@@ -23,11 +23,14 @@ function! FileGrepInputChanged()
     call FileGrep()
 endfunction
 function! OpenFileGrepSearch()
+    silent! call FileGrepBuffer()
+    startinsert
+endfunction
+function! FileGrepBuffer()
     10new
     set buftype=nofile
     set filetype=file_grep
-    file! FileGrep
-    startinsert
+    file FileGrep
 endfunction
 function! FileGrep()
     let a:cursor_pos = getpos(".")
