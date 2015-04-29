@@ -5,7 +5,7 @@ function _git_grep_files() {
         local path_to_toplevel=$(git rev-parse --show-toplevel)
         if [ $? -eq 0 ]; then
             cd "$path_to_toplevel"
-            local cmd="git grep -i -e \"$1\""
+            local cmd="git grep -n -i -e \"$1\""
             shift
             for var in "$@"
             do
