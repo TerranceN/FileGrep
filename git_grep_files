@@ -9,7 +9,7 @@ function _git_grep_files() {
             shift
             for var in "$@"
             do
-                cmd+=" --and -e $var"
+                cmd+=" --and -e \"$var\""
             done
             eval "$cmd"
         fi

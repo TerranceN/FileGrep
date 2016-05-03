@@ -41,7 +41,7 @@ function! FileGrep()
     endif
     :2
     silent normal! 9999dd
-    exec "silent 1read !" . g:file_grep_plugin_dir . "/git_grep_files " . $INPUT
+    exec "silent 1read !" . g:file_grep_plugin_dir . "/git_grep_files \"" . escape($INPUT, "") . "\""
     syntax clear
     syn match File "^[^:]*:"
     hi File ctermfg=yellow
