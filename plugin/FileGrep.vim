@@ -20,7 +20,7 @@ function! File_grep_key_mappings()
 endfunction
 function! FileGrepInputChanged()
     let g:file_grep_last_command=getline(1)
-    call FileGrep()
+    silent! call FileGrep()
 endfunction
 function! OpenFileGrepSearch()
     silent! call FileGrepBuffer()
