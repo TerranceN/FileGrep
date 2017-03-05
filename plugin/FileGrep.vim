@@ -29,7 +29,6 @@ function! File_grep_key_mappings()
     au!
     au TextChangedI <buffer> call FileGrepInputChanged()
     au TextChanged <buffer> call FileGrepInputChanged()
-    au BufWinLeave <buffer> bd
   augroup END
 endfunction
 function! FileGrepInputChanged()
