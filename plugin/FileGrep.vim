@@ -15,8 +15,7 @@ endif
 
 func! PreFileGrep()
   let a:cursor_pos = getpos(".")
-  :2
-  silent! :2,$d
+  normal ggjVG"_d
   return a:cursor_pos
 endfunc
 
@@ -66,7 +65,7 @@ if v:version >= 800
       call job_stop(b:fileGrepJob, "kill")
     endif
     let b:fileGrepResults = []
-    let b:fileGrepJob = job_start(["/bin/bash", "-c", ("" . s:file_grep_plugin_dir . "/git_grep_files \"" . escape(a:input, "") . "\"")], {"out_cb": "FileGrepJobMessageHandler", "close_cb": "FileGrepJobFinishedHandler"})
+    let b:fileGrepJob = job_start(["/bin/bash", "-c", ("" . s:file_grep_plugin_dir . "/git_grep_files \"" . escape(a:input, "") . "\" | head -n 200 | cut -c -200")], {"out_cb": "FileGrepJobMessageHandler", "close_cb": "FileGrepJobFinishedHandler"})
   endfunc
 end
 
@@ -75,7 +74,8 @@ augroup file_grep_keys
   au FileType file_grep call File_grep_key_mappings()
 augroup END
 function! File_grep_key_mappings()
-  nnoremap <buffer> <leader><CR> :call FileGrepOverwrite()<CR>
+  inoremap <buffer> <C-\> <ESC>:call FileGrepOverwrite()<CR>
+  nnoremap <buffer> <C-\> :call FileGrepOverwrite()<CR>
   inoremap <buffer> <CR> <ESC>:call FileGrepOpenNewTab()<CR>
   nnoremap <buffer> <CR> :call FileGrepOpenNewTab()<CR>
   inoremap <buffer> <C-v> <ESC>:call FileGrepOpenInSplit()<CR>
@@ -111,7 +111,7 @@ function! FileGrep()
     call FileGrepStartJob($INPUT)
   else
     let a:cursor_pos = PreFileGrep()
-    exec "silent 1read !" . s:file_grep_plugin_dir . "/git_grep_files \"" . escape($INPUT, "") . "\""
+    exec "silent 1read !" . s:file_grep_plugin_dir . "/git_grep_files \"" . escape($INPUT, "") . "\" | head -n 200 | cut -c -200"
     call PostFileGrep(a:cursor_pos)
   endif
 endfunction
@@ -119,6 +119,7 @@ function! FileGrepOpenInSplitForInput(input)
   let $INPUT=substitute(a:input, ":.*", "", "")
   let $LINE_NUMBER=substitute(a:input, "^[^:]*:\\([^:]*\\):.*$", "\\1", "")
   :q
+  set splitright
   exec "vsp " . substitute(system("git rev-parse --show-toplevel"), "\n", "", "") . "/" . $INPUT
   exec ":" . $LINE_NUMBER
 endfunction
@@ -139,12 +140,12 @@ func! FileGrepOpenNewTabForInput(input)
   let $LINE_NUMBER=substitute(a:input, "^[^:]*:\\([^:]*\\):.*$", "\\1", "")
   :q
   if g:file_grep_tab_move
-    tabm +99999
+    tabmove
   endif
   exec "tab " . g:file_grep_tab_fcn . " " . substitute(system("git rev-parse --show-toplevel"), "\n", "", "") . "/" . $INPUT
   exec ":" . $LINE_NUMBER
   if g:file_grep_tab_move
-    tabm +99999
+    tabmove
   endif
 endfunc
 function! FileGrepOpenNewTab()

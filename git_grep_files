@@ -11,6 +11,13 @@ function _git_grep_files() {
             do
                 cmd+=" --and -e \"$var\""
             done
+            if [ -f "${path_to_toplevel}/.gitfindignore" ]; then
+              cmd += " -- "
+              for ignore in $(cat "${path_to_toplevel}/.gitfindignore")
+              do
+                cmd+=" \":(exclude)$ignore\""
+              done
+            fi
             eval "$cmd"
         fi
     fi
